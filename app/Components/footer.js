@@ -3,7 +3,7 @@ import React from "react";
 const Footer = () => {
   return (
     <>
-      <div className="flex flex-row bg-gray-200 text-black text-xs p-4">
+      <div className="flex flex-row justify-center bg-gray-200 text-black text-xs p-4">
         <div className="p-2">
           <h1>Bank Of Judah</h1>
         </div>
