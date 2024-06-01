@@ -3,12 +3,13 @@ import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 const Main = () => {
+  const router = useRouter();
+
   const FormSubmit = (event) => {
     event.preventDefault();
     window.alert(" Now Redirecting to Users Account");
     router.push("/UserAccount");
   };
-  const router = useRouter();
   return (
     <>
       <section className="pt-12 pb-24 bg-blue-200 bg-cover flex justify-center items-center">

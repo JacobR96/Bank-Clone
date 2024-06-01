@@ -128,7 +128,7 @@ const AccountSection = ({ title, total, amounts }) => (
       <p className="p-4 m-2">{"$" + total}</p>
     </div>
     {amounts.map((amount, index) => (
-      <Link href={"../../UserAccount/AccountInfo"}>
+      <Link href="../../UserAccount/AccountInfo">
         <AccountCard
           key={index}
           amount={amount}
