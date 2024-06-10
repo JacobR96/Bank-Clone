@@ -1,34 +1,103 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
 const UserInfo = () => {
-  const checking1 = 5274;
-  const checking2 = 8136;
-  const checkTotal = checking1 + checking2;
+  const [checking, setChecking] = useState([]);
+  const [savings, setSavings] = useState([]);
+  const [certificates, setCertificates] = useState([]);
+  const [creditCards, setCreditCards] = useState([]);
+  const [loans, setLoans] = useState([]);
+  const [accountBalance, setAccountBalance] = useState(0);
 
-  const savings1 = 1452;
-  const savings2 = 6798;
-  const savingTotal = savings1 + savings2;
+  useEffect(() => {
+    fetchChecking();
+    fetchSavings();
+    fetchCertificates();
+    fetchCreditCards();
+    fetchLoans();
+  }, []);
 
-  const certificates1 = 3947;
-  const certificates2 = 5623;
-  const certificatesTotal = certificates1 + certificates2;
+  const fetchChecking = async () => {
+    try {
+      const response = await fetch("http://localhost:5263/api/CheckingAccount");
+      const data = await response.json();
+      console.log("Checking Data:", data);
+      setChecking(data);
+      const checkingTotal = data.reduce(
+        (sum, account) => sum + account.balance,
+        0
+      );
+      setAccountBalance((prevBalance) => prevBalance + checkingTotal);
+    } catch (error) {
+      console.error("Error fetching checking accounts:", error);
+    }
+  };
 
-  const creditCards1 = 2811;
-  const creditCards2 = 7194;
-  const creditCardsTotal = creditCards1 + creditCards2;
+  const fetchSavings = async () => {
+    try {
+      const response = await fetch("http://localhost:5263/api/SavingsAccount");
+      const data = await response.json();
+      console.log("Savings Data:", data);
+      setSavings(data);
+      const savingsTotal = data.reduce(
+        (sum, account) => sum + account.balance,
+        0
+      );
+      setAccountBalance((prevBalance) => prevBalance + savingsTotal);
+    } catch (error) {
+      console.error("Error fetching savings accounts:", error);
+    }
+  };
 
-  const loans1 = -3489;
-  const loans2 = -5732;
-  const loansTotal = loans1 + loans2;
+  const fetchCertificates = async () => {
+    try {
+      const response = await fetch("http://localhost:5263/api/Certificates");
+      const data = await response.json();
+      console.log("Certificates Data:", data);
+      setCertificates(data);
+      const certificatesTotal = data.reduce(
+        (sum, account) => sum + account.balance,
+        0
+      );
+      setAccountBalance((prevBalance) => prevBalance + certificatesTotal);
+    } catch (error) {
+      console.error("Error fetching certificates:", error);
+    }
+  };
 
-  const accountBalance =
-    checkTotal +
-    savingTotal +
-    certificatesTotal +
-    creditCardsTotal +
-    loansTotal;
+  const fetchCreditCards = async () => {
+    try {
+      const response = await fetch("http://localhost:5263/api/CreditCards");
+      const data = await response.json();
+      console.log("Credit Cards Data:", data);
+      setCreditCards(data);
+      const creditCardsTotal = data.reduce(
+        (sum, account) => sum + account.balance,
+        0
+      );
+      setAccountBalance((prevBalance) => prevBalance + creditCardsTotal);
+    } catch (error) {
+      console.error("Error fetching credit cards:", error);
+    }
+  };
+
+  const fetchLoans = async () => {
+    try {
+      const response = await fetch("http://localhost:5263/api/Loans");
+      const data = await response.json();
+      console.log("Loans Data:", data);
+      setLoans(data);
+      const loansTotal = data.reduce(
+        (sum, account) => sum + account.balance,
+        0
+      );
+      setAccountBalance((prevBalance) => prevBalance + loansTotal);
+    } catch (error) {
+      console.error("Error fetching loans:", error);
+    }
+  };
 
   return (
     <>
@@ -58,41 +127,30 @@ const UserInfo = () => {
         </div>
         <hr className="border-gray-200 m-4" />
         <div className="text-black">
-          <div className="mb-6">
-            <div className="flex justify-between items-center">
-              <h2 className="p-2 text-lg">Checking</h2>
-              <p className="p-4 m-2">{"$" + checkTotal}</p>
-            </div>
-            {[checking1, checking2].map((amount, index) => (
-              <Link href={"../../UserAccount/AccountInfo"}>
-                <AccountCard
-                  key={index}
-                  amount={amount}
-                  label={`EveryDay Checking-${index + 1}`}
-                  imageSrc="https://jacob-portfolio.s3.amazonaws.com/credit-card.png"
-                />{" "}
-              </Link>
-            ))}
-          </div>
+          <AccountSection
+            title="Checking"
+            total={checking.reduce((sum, acc) => sum + acc.balance, 0)}
+            accounts={checking}
+          />
           <AccountSection
             title="Savings"
-            total={savingTotal}
-            amounts={[savings1, savings2]}
+            total={savings.reduce((sum, acc) => sum + acc.balance, 0)}
+            accounts={savings}
           />
           <AccountSection
             title="Certificates"
-            total={certificatesTotal}
-            amounts={[certificates1, certificates2]}
+            total={certificates.reduce((sum, acc) => sum + acc.balance, 0)}
+            accounts={certificates}
           />
           <AccountSection
             title="Credit Cards"
-            total={creditCardsTotal}
-            amounts={[creditCards1, creditCards2]}
+            total={creditCards.reduce((sum, acc) => sum + acc.balance, 0)}
+            accounts={creditCards}
           />
           <AccountSection
             title="Loans"
-            total={loansTotal}
-            amounts={[loans1, loans2]}
+            total={loans.reduce((sum, acc) => sum + acc.balance, 0)}
+            accounts={loans}
           />
         </div>
       </div>
@@ -100,7 +158,7 @@ const UserInfo = () => {
   );
 };
 
-const AccountCard = ({ amount, label, imageSrc }) => (
+const AccountCard = ({ account, label, imageSrc }) => (
   <div className="bg-gray-100 p-4 m-6 rounded-md border-2 shadow">
     <div className="flex justify-between items-center">
       <div className="flex items-center">
@@ -114,24 +172,23 @@ const AccountCard = ({ amount, label, imageSrc }) => (
         <p className="p-2">{label}</p>
       </div>
       <div>
-        <p className="p-2">{"$" + amount}</p>
+        <p className="p-2">{"$" + account.balance}</p>
         <p className="text-gray-400 text-sm">Available Balance</p>
       </div>
     </div>
   </div>
 );
 
-const AccountSection = ({ title, total, amounts }) => (
+const AccountSection = ({ title, total, accounts }) => (
   <div className="mb-6">
     <div className="flex justify-between items-center">
       <h2 className="p-2 text-lg">{title}</h2>
       <p className="p-4 m-2">{"$" + total}</p>
     </div>
-    {amounts.map((amount, index) => (
-      <Link href="../../UserAccount/AccountInfo">
+    {accounts.map((account, index) => (
+      <Link href="../../UserAccount/AccountInfo" key={index}>
         <AccountCard
-          key={index}
-          amount={amount}
+          account={account}
           label={`${title} Account-${index + 1}`}
           imageSrc="https://jacob-portfolio.s3.amazonaws.com/credit-card.png"
         />

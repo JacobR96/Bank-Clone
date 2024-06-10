@@ -6,6 +6,7 @@ const Statements = () => {
   const accountBalance = 3250.75;
   const checkTotal = 500.0;
   const checking1 = 1500.25;
+  const data = fetch("http://localhost:5263/api/CheckingAccount");
 
   return (
     <div className="m-auto max-w-screen-md">
